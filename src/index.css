@@ -1,2 +1,37 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulse-gradient {
+  0%, 100% {
+    background: linear-gradient(to bottom right, #facc15, #fbbf24, #f59e0b);
+  }
+  50% {
+    background: linear-gradient(to bottom right, #f59e0b, #d97706, #b45309);
+  }
+}
+
+.animate-gradient {
+  animation: pulse-gradient 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.bg-shimmer {
+  animation: shimmer 3s linear infinite;
+}
