@@ -9,6 +9,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { apiService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -25,13 +26,34 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      
+      // If user is logged in, authenticate with server
+      if (currentUser) {
+        try {
+          const idToken = await currentUser.getIdToken();
+          await apiService.loginWithToken(idToken);
+        } catch (error) {
+          console.error('Error authenticating with server:', error);
+        }
+      }
+      
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  // Helper function to authenticate with server after Firebase auth
+  const authenticateWithServer = async (userCredential) => {
+    try {
+      const idToken = await userCredential.user.getIdToken();
+      await apiService.loginWithToken(idToken);
+    } catch (error) {
+      console.error('Error authenticating with server:', error);
+    }
+  };
 
   // Register with email and password
   const register = async (email, password, displayName) => {
@@ -42,18 +64,31 @@ export const AuthProvider = ({ children }) => {
       await updateProfile(userCredential.user, { displayName });
     }
     
+    // Authenticate with server
+    await authenticateWithServer(userCredential);
+    
     return userCredential;
   };
 
   // Login with email and password
   const login = async (email, password) => {
-    return await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    // Authenticate with server
+    await authenticateWithServer(userCredential);
+    
+    return userCredential;
   };
 
   // Login with Google
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    return await signInWithPopup(auth, provider);
+    const userCredential = await signInWithPopup(auth, provider);
+    
+    // Authenticate with server
+    await authenticateWithServer(userCredential);
+    
+    return userCredential;
   };
 
   // Logout

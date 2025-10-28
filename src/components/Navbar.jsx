@@ -113,6 +113,16 @@ const Navbar = () => {
             >
               Profile
             </Link>
+            <Link
+              to="/settings"
+              className={`px-4 py-2 rounded-lg transition-all ${
+                isActive('/settings') 
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md' 
+                  : 'text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              Settings
+            </Link>
           </div>
           
           {/* User Section - Right */}
@@ -158,6 +168,15 @@ const Navbar = () => {
                   >
                     Profile
                   </Link>
+                  <Link 
+                    to="/settings" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-4 py-2 transition-colors ${
+                      isActive('/settings') ? 'bg-gray-700 text-cyan-400' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
+                  >
+                    Settings
+                  </Link>
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
@@ -175,21 +194,43 @@ const Navbar = () => {
             <div className="hidden md:block relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-md hover:ring-2 hover:ring-cyan-400 transition-all"
+                className="flex items-center justify-center w-10 h-10 rounded-full overflow-hidden shadow-md hover:ring-2 hover:ring-cyan-400 transition-all relative"
               >
-                <span className="font-bold text-sm">
-                  {user?.displayName ? user.displayName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U'}
+                {user?.photoURL ? (
+                  <img 
+                    src={user.photoURL}
+                    alt={user?.displayName || user?.email}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : null}
+                <span className="font-bold text-sm flex items-center justify-center w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white absolute inset-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
                 </span>
               </button>
               
               {/* User Dropdown Menu */}
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+                <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
                   <div className="p-3 border-b border-gray-700">
                     <p className="font-semibold text-white">{user?.displayName || 'User'}</p>
                     <p className="text-sm text-gray-400 truncate">{user?.email}</p>
                   </div>
                   <div className="py-1">
+                    <Link 
+                      to="/dashboard" 
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-gray-700 transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      Dashboard
+                    </Link>
                     <Link 
                       to="/profile" 
                       onClick={() => setUserMenuOpen(false)}
@@ -198,8 +239,20 @@ const Navbar = () => {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      Profile Settings
+                      Profile
                     </Link>
+                    <Link 
+                      to="/settings" 
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-gray-700 transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Settings
+                    </Link>
+                    <div className="border-t border-gray-700 my-1"></div>
                     <button
                       onClick={() => {
                         setUserMenuOpen(false);

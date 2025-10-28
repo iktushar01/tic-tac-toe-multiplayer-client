@@ -7,6 +7,7 @@ import RoomSelector from '../pages/GameRoom/RoomSelector';
 import RoomGameRoom from '../pages/GameRoom/RoomGameRoom';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Profile from '../pages/Profile/Profile';
+import Settings from '../pages/Settings/Settings';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
 
@@ -71,6 +72,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         }
       />
