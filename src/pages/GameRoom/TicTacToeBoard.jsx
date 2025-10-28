@@ -1,44 +1,85 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
+import Modal from 'react-modal';
+import Swal from 'sweetalert2';
+import { checkWinner, isBoardFull } from '../../GameLogic/gameLogic';
 
-const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
+// Set app element for react-modal (accessibility)
+if (typeof window !== 'undefined') {
+  Modal.setAppElement('#root');
+}
+
+const TicTacToeBoard = forwardRef(({ onMove, onReset, disabled, currentPlayer, playerSymbol, resetKey, player1Name = 'Player 1', player2Name = 'Player 2' }, ref) => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [winner, setWinner] = useState(null);
   const [winningLine, setWinningLine] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const boardRef = useRef(board);
+  const hasShownModalRef = useRef(false);
 
-  useEffect(() => {
-    // Reset board when needed
+  // Define resetBoard before it's used in useEffect
+  const resetBoard = useCallback(() => {
     setBoard(Array(9).fill(null));
     setWinner(null);
     setWinningLine([]);
-  }, [currentPlayer]);
-
-  const checkWinner = (squares) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return { winner: squares[a], line: lines[i] };
-      }
+    setIsModalOpen(false);
+    hasShownModalRef.current = false;
+    // Call parent's reset function if provided
+    if (onReset) {
+      onReset();
     }
-    return null;
+  }, [onReset]);
+
+  useEffect(() => {
+    // Reset board when resetKey changes
+    setBoard(Array(9).fill(null));
+    boardRef.current = Array(9).fill(null);
+    setWinner(null);
+    setWinningLine([]);
+    setIsModalOpen(false);
+    hasShownModalRef.current = false;
+  }, [resetKey]);
+
+  // Automatically open modal when winner is detected (only once per game)
+  useEffect(() => {
+    if (winner && !hasShownModalRef.current && !isModalOpen) {
+      setIsModalOpen(true);
+      hasShownModalRef.current = true;
+    }
+  }, [winner, isModalOpen]);
+
+  const handleViewResult = () => {
+    setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Don't reset hasShownModalRef so modal doesn't reopen
+  };
+
+  const handlePlayAgain = () => {
+    setIsModalOpen(false);
+    Swal.fire({
+      title: '🎮 New Game!',
+      text: 'Get ready to play again!',
+      icon: 'success',
+      confirmButtonText: 'Let\'s Play!',
+      confirmButtonColor: '#22d3ee',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+    setTimeout(() => {
+      resetBoard();
+    }, 1600);
+  };
+
+  // Expose current board to window for AI to access
+  useEffect(() => {
+    boardRef.current = board;
+    window.tttBoard = board;
+  }, [board]);
+
   const handleClick = (index) => {
-    if (disabled || board[index] || winner) return;
+    if (board[index] || winner) return;
 
     const newBoard = [...board];
     newBoard[index] = currentPlayer;
@@ -48,20 +89,27 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
     if (result) {
       setWinner(result.winner);
       setWinningLine(result.line);
-      if (onMove) onMove(index, result.winner);
-    } else if (newBoard.every((cell) => cell !== null)) {
+      if (onMove) onMove(index, result.winner, newBoard);
+    } else if (isBoardFull(newBoard)) {
       setWinner('Draw');
-      if (onMove) onMove(index, 'Draw');
+      if (onMove) onMove(index, 'Draw', newBoard);
     } else {
-      if (onMove) onMove(index, null);
+      if (onMove) onMove(index, null, newBoard);
     }
   };
 
-  const resetBoard = () => {
-    setBoard(Array(9).fill(null));
-    setWinner(null);
-    setWinningLine([]);
-  };
+  // Expose handleClick to parent via ref
+  useImperativeHandle(ref, () => ({
+    handleClick
+  }));
+
+  // Expose reset function to parent
+  useEffect(() => {
+    window.resetGameBoard = resetBoard;
+    return () => {
+      delete window.resetGameBoard;
+    };
+  }, [resetBoard]);
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -73,7 +121,7 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
               key={index}
               onClick={() => handleClick(index)}
               disabled={disabled || board[index] || winner}
-              className={`w-20 h-20 sm:w-24 sm:h-24 text-4xl sm:text-5xl font-bold rounded-xl transition-all shadow-lg hover:scale-105
+              className={`ttt-cell w-20 h-20 sm:w-24 sm:h-24 text-4xl sm:text-5xl font-bold rounded-xl transition-all shadow-lg hover:scale-105
                 ${cell === 'X'
                   ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/50'
                   : cell === 'O'
@@ -92,24 +140,23 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
       </div>
 
       {winner && (
-        <div className={`px-8 py-4 rounded-lg shadow-lg animate-bounce ${
-          winner === playerSymbol 
-            ? 'bg-green-900 border border-green-700 text-green-200' 
-            : winner === 'Draw' 
-            ? 'bg-yellow-900 border border-yellow-700 text-yellow-200' 
-            : 'bg-red-900 border border-red-700 text-red-200'
-        }`}>
-          <span className="text-2xl font-bold">
-            {winner === 'Draw'
-              ? '🤝 It\'s a Draw!'
-              : winner === playerSymbol
-              ? '🎉 You Win!'
-              : '😢 You Lost!'}
-          </span>
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl px-6 py-4 shadow-xl border-2 border-purple-400 animate-pulse">
+          <div className="flex items-center justify-center gap-3 text-white">
+            <div className="text-2xl animate-bounce">🎮</div>
+            <span className="text-xl font-bold">Match Finished!</span>
+          </div>
         </div>
       )}
-
+      
       <div className="flex gap-3">
+        {winner && (
+          <button 
+            onClick={handleViewResult}
+            className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-semibold hover:scale-105 transition-all shadow-xl text-base sm:text-lg animate-pulse"
+          >
+            📊 View Result
+          </button>
+        )}
         <button 
           className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold hover:scale-105 transition-all shadow-xl text-base sm:text-lg" 
           onClick={resetBoard}
@@ -117,8 +164,73 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
           🎮 New Game
         </button>
       </div>
+
+      {/* Result Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={handleCloseModal}
+        className="modal-content"
+        overlayClassName="modal-overlay"
+        contentLabel="Match Result"
+      >
+        <div className="bg-gray-900 text-white p-8 rounded-lg max-w-md w-full">
+          <div className="text-center">
+            {winner === 'Draw' && (
+              <>
+                <div className="text-6xl mb-4">🤝</div>
+                <h2 className="text-3xl font-bold mb-4 text-yellow-400">It's a Draw!</h2>
+                <div className="mb-4">
+                  <p className="text-lg text-gray-300">{player1Name} vs {player2Name}</p>
+                </div>
+                <p className="text-lg text-gray-300 mb-8">No one wins this time. Try again!</p>
+              </>
+            )}
+            {winner === playerSymbol && (
+              <>
+                <div className="text-6xl mb-4">🎉</div>
+                <h2 className="text-3xl font-bold mb-4 text-green-400">You Win!</h2>
+                <div className="mb-4">
+                  <p className="text-lg text-gray-300">
+                    <span className="font-bold text-green-400">{winner === 'X' ? player1Name : player2Name}</span> won!
+                  </p>
+                  <p className="text-sm text-gray-400">{player1Name} vs {player2Name}</p>
+                </div>
+                <p className="text-lg text-gray-300 mb-8">Congratulations! You are the winner!</p>
+              </>
+            )}
+            {winner && winner !== 'Draw' && winner !== playerSymbol && (
+              <>
+                <div className="text-6xl mb-4">😢</div>
+                <h2 className="text-3xl font-bold mb-4 text-red-400">You Lost!</h2>
+                <div className="mb-4">
+                  <p className="text-lg text-gray-300">
+                    <span className="font-bold text-red-400">{winner === 'X' ? player1Name : player2Name}</span> won!
+                  </p>
+                  <p className="text-sm text-gray-400">{player1Name} vs {player2Name}</p>
+                </div>
+                <p className="text-lg text-gray-300 mb-8">Better luck next time!</p>
+              </>
+            )}
+            
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={handleCloseModal}
+                className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-all"
+              >
+                Close
+              </button>
+              <button
+                onClick={handlePlayAgain}
+                className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-lg font-semibold transition-all"
+              >
+                Play Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
-};
+});
 
 export default TicTacToeBoard;

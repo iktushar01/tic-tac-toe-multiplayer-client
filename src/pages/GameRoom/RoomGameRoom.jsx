@@ -13,7 +13,7 @@ const RoomGameRoom = () => {
   const [gameState, setGameState] = useState('playing');
   const [playerSymbol] = useState('X');
 
-  const handleMove = (index, result) => {
+  const handleMove = (index, result, board) => {
     if (result) {
       setGameState('finished');
     } else {

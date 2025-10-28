@@ -34,3 +34,72 @@
 .bg-shimmer {
   animation: shimmer 3s linear infinite;
 }
+
+/* SweetAlert2 Custom Styles */
+.swal2-popup {
+  background: #1f2937 !important;
+  border: 2px solid #374151 !important;
+  border-radius: 1rem !important;
+}
+
+.swal2-title {
+  color: #ffffff !important;
+  font-size: 2rem !important;
+}
+
+.swal2-html-container {
+  color: #d1d5db !important;
+}
+
+.swal2-confirm {
+  background: linear-gradient(to right, #06b6d4, #3b82f6) !important;
+  border: none !important;
+  padding: 0.75rem 2rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover {
+  transform: scale(1.05) !important;
+}
+
+/* React Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+  position: relative;
+  outline: none;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

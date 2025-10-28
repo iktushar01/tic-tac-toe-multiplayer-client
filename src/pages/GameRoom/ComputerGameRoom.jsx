@@ -1,53 +1,67 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TicTacToeBoard from './TicTacToeBoard';
-
-// Naive AI: pick first empty cell
-function computeAIMove(board) {
-  for (let i = 0; i < board.length; i += 1) {
-    if (board[i] === null) return i;
-  }
-  return -1;
-}
+import { getRandomEmptyCell } from '../../GameLogic/gameLogic';
 
 const ComputerGameRoom = () => {
-  const { gameId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const [currentPlayer, setCurrentPlayer] = useState('X');
   const [gameState, setGameState] = useState('playing');
   const [playerSymbol] = useState('X');
-  const [lastBoard, setLastBoard] = useState(Array(9).fill(null));
+  const boardRef = useRef(Array(9).fill(null));
+  const [resetKey, setResetKey] = useState(0);
+  const aiMovePendingRef = useRef(false);
+  const boardInstanceRef = useRef(null);
+  const [player1Name] = useState('You');
+  const [player2Name] = useState('Computer');
 
-  // When it's AI's turn, make a move
-  useEffect(() => {
-    if (gameState !== 'playing') return;
-    if (currentPlayer !== 'O') return;
-
-    const index = computeAIMove(lastBoard);
-    if (index >= 0) {
-      const event = new CustomEvent('tictactoe-ai-move', {
-        detail: { index },
-      });
-      window.dispatchEvent(event);
-    }
-  }, [currentPlayer, gameState, lastBoard]);
-
-  const handleMove = (index, result) => {
-    // Track last board via synthetic events raised by board component
+  const handleMove = (index, result, board) => {
+    console.log('Move made:', { index, result, board, currentPlayer });
+    boardRef.current = board;
+    
     if (result) {
       setGameState('finished');
     } else {
-      setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+      // Switch turn
+      setCurrentPlayer(prev => prev === 'X' ? 'O' : 'X');
     }
   };
 
-  // Listen to board state snapshots
+  const resetGame = () => {
+    setCurrentPlayer('X');
+    setGameState('playing');
+    boardRef.current = Array(9).fill(null);
+    setResetKey(prev => prev + 1);
+    aiMovePendingRef.current = false;
+  };
+
+  // Handle AI move
   useEffect(() => {
-    const onSnapshot = (e) => setLastBoard(e.detail.board);
-    window.addEventListener('tictactoe-board-snapshot', onSnapshot);
-    return () => window.removeEventListener('tictactoe-board-snapshot', onSnapshot);
-  }, []);
+    if (gameState !== 'playing') return;
+    if (currentPlayer !== 'O') return;
+    if (aiMovePendingRef.current) return;
+
+    aiMovePendingRef.current = true;
+    console.log('AI turn!');
+
+    const timer = setTimeout(() => {
+      const currentBoard = boardRef.current || Array(9).fill(null);
+      console.log('Current board:', currentBoard);
+      
+      const aiMove = getRandomEmptyCell(currentBoard);
+      console.log('AI move index:', aiMove);
+      
+      if (aiMove !== -1 && boardInstanceRef.current) {
+        // Call the handleClick function directly from the board instance
+        boardInstanceRef.current.handleClick(aiMove);
+      }
+      aiMovePendingRef.current = false;
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentPlayer, gameState]);
 
   const leaveRoom = () => {
     navigate('/');
@@ -61,10 +75,13 @@ const ComputerGameRoom = () => {
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-3xl font-bold text-white">🤖 Computer Mode</h1>
               <div className="px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-semibold">
-                {`Game: ${gameId || 'Local'}`}
+                Game Mode: AI
               </div>
             </div>
-            <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold hover:scale-105 transition-transform shadow-xl" onClick={leaveRoom}>
+            <button 
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold hover:scale-105 transition-transform shadow-xl" 
+              onClick={leaveRoom}
+            >
               🚪 Leave
             </button>
           </div>
@@ -73,17 +90,54 @@ const ComputerGameRoom = () => {
         <div className="bg-gray-800 shadow-xl border border-gray-700 rounded-lg">
           <div className="p-6 items-center">
             <div className="w-full mb-6">
-              <div className="bg-blue-900 border border-blue-700 rounded-lg px-4 py-3 mb-4">
-                <span className="text-white">
-                  {currentPlayer === playerSymbol ? '🎯 Your turn to play!' : '🤖 AI thinking...'}
-                </span>
+              <div className={`
+                rounded-xl px-6 py-4 mb-4 transition-all duration-300 shadow-lg
+                ${gameState === 'finished' 
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 animate-pulse'
+                  : currentPlayer === playerSymbol 
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 border-2 border-cyan-300'
+                  : 'bg-gradient-to-r from-gray-700 to-gray-800 border-2 border-gray-500'
+                }
+              `}>
+                <div className="flex items-center justify-center gap-3">
+                  {gameState === 'finished' && (
+                    <>
+                      <div className="text-3xl animate-bounce">🎮</div>
+                      <span className="text-white text-xl font-bold">
+                        Match Finished!
+                      </span>
+                    </>
+                  )}
+                  {gameState === 'playing' && currentPlayer === playerSymbol && (
+                    <>
+                      <div className="text-3xl animate-pulse">🎯</div>
+                      <span className="text-white text-lg font-semibold">
+                        Your turn to play!
+                      </span>
+                    </>
+                  )}
+                  {gameState === 'playing' && currentPlayer !== playerSymbol && (
+                    <>
+                      <div className="text-3xl animate-pulse">🤖</div>
+                      <span className="text-white text-lg font-semibold">
+                        AI is thinking...
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
 
               <TicTacToeBoard
+                ref={boardInstanceRef}
+                key={resetKey}
                 onMove={handleMove}
+                onReset={resetGame}
                 disabled={currentPlayer !== playerSymbol || gameState !== 'playing'}
                 currentPlayer={currentPlayer}
                 playerSymbol={playerSymbol}
+                resetKey={resetKey}
+                player1Name={player1Name}
+                player2Name={player2Name}
               />
             </div>
           </div>
@@ -94,5 +148,3 @@ const ComputerGameRoom = () => {
 };
 
 export default ComputerGameRoom;
-
-

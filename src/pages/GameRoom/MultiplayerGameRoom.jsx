@@ -24,7 +24,7 @@ const MultiplayerGameRoom = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleMove = (index, result) => {
+  const handleMove = (index, result, board) => {
     if (result) {
       setGameState('finished');
     } else {
