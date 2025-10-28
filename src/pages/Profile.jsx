@@ -1,19 +1,28 @@
 import { useState, useEffect } from 'react';
 import StatsCard from '../components/StatsCard';
 import { apiService } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState({
-    username: 'Player',
-    email: 'player@example.com',
+    username: '',
+    email: '',
     avatar: null,
   });
 
   useEffect(() => {
-    apiService.getUserStats().then(setStats);
-  }, []);
+    if (user) {
+      setProfileData({
+        username: user.displayName || 'Player',
+        email: user.email || '',
+        avatar: user.photoURL || null,
+      });
+      apiService.getUserStats(user.uid).then(setStats);
+    }
+  }, [user]);
 
   const handleSave = () => {
     // In a real app, this would update the backend

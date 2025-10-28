@@ -42,7 +42,8 @@ export const apiService = {
   },
 
   // User data
-  getUserStats: async () => {
+  getUserStats: async (userId) => {
+    // In production, this would fetch from Firestore
     return {
       wins: 45,
       losses: 30,
@@ -53,7 +54,8 @@ export const apiService = {
     };
   },
 
-  getMatchHistory: async () => {
+  getMatchHistory: async (userId) => {
+    // In production, this would fetch from Firestore
     return [
       {
         id: '1',

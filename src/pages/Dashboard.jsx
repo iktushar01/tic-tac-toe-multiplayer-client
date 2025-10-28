@@ -3,28 +3,32 @@ import StatsCard from '../components/StatsCard';
 import MatchCard from '../components/MatchCard';
 import LeaderboardCard from '../components/LeaderboardCard';
 import { apiService } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [matchHistory, setMatchHistory] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
-    // Fetch stats
-    apiService.getUserStats().then(setStats);
+    if (user) {
+      // Fetch stats
+      apiService.getUserStats(user.uid).then(setStats);
 
-    // Fetch match history
-    apiService.getMatchHistory().then(setMatchHistory);
+      // Fetch match history
+      apiService.getMatchHistory(user.uid).then(setMatchHistory);
 
-    // Sample leaderboard data
-    setLeaderboard([
-      { id: 1, username: 'Champion', wins: 120, winRate: 75 },
-      { id: 2, username: 'Master', wins: 95, winRate: 68 },
-      { id: 3, username: 'Pro', wins: 80, winRate: 65 },
-      { id: 4, username: 'Player', wins: 45, winRate: 50 },
-      { id: 5, username: 'Warrior', wins: 40, winRate: 45 },
-    ]);
-  }, []);
+      // Sample leaderboard data
+      setLeaderboard([
+        { id: 1, username: 'Champion', wins: 120, winRate: 75 },
+        { id: 2, username: 'Master', wins: 95, winRate: 68 },
+        { id: 3, username: 'Pro', wins: 80, winRate: 65 },
+        { id: 4, username: user?.displayName || 'Player', wins: 45, winRate: 50 },
+        { id: 5, username: 'Warrior', wins: 40, winRate: 45 },
+      ]);
+    }
+  }, [user]);
 
   if (!stats) {
     return (

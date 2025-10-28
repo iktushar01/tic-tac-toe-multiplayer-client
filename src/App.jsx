@@ -1,5 +1,6 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useEffect } from 'react';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AppRoutes from './routes/AppRoutes';
@@ -16,13 +17,15 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-base-200">
-        <Navbar />
-        <main className="grow">
-          <AppRoutes />
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen flex flex-col bg-base-200">
+          <Navbar />
+          <main className="grow">
+            <AppRoutes />
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
     </Router>
   );
 }

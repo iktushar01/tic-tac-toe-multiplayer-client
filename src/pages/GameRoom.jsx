@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TicTacToeBoard from '../components/TicTacToeBoard';
+import { useAuth } from '../context/AuthContext';
 
 const GameRoom = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentPlayer, setCurrentPlayer] = useState('X');
   const [gameState, setGameState] = useState('playing'); // playing, waiting, finished
   const [playerSymbol, setPlayerSymbol] = useState('X');
   const [opponent, setOpponent] = useState('Opponent');
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
-  const username = 'Player'; // You can replace this with Firebase later
+  const username = user?.displayName || 'Player';
 
   // Simulate opponent after a delay
   useEffect(() => {
