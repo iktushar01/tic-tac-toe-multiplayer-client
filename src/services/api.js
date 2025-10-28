@@ -171,5 +171,63 @@ export const apiService = {
       return [];
     }
   },
+
+  // Friend System APIs
+  getAllUsers: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/all`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
+    }
+
+    return await response.json();
+  },
+
+  sendFriendRequest: async (userId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/request/${userId}`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to send friend request');
+    }
+
+    return await response.json();
+  },
+
+  respondToFriendRequest: async (userId, action) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/respond/${userId}`, {
+      method: 'POST',
+      body: JSON.stringify({ action }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to respond to friend request');
+    }
+
+    return await response.json();
+  },
+
+  getFriendsList: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/list`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch friends list');
+    }
+
+    return await response.json();
+  },
+
+  getFriendRequests: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/requests`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch friend requests');
+    }
+
+    return await response.json();
+  },
 };
 
