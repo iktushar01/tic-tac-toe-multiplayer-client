@@ -1,7 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import Home from '../pages/Home/Home';
-import GameRoom from '../pages/GameRoom/GameRoom';
+import MultiplayerGameRoom from '../pages/GameRoom/MultiplayerGameRoom';
+import ComputerGameRoom from '../pages/GameRoom/ComputerGameRoom';
+import RoomSelector from '../pages/GameRoom/RoomSelector';
+import RoomGameRoom from '../pages/GameRoom/RoomGameRoom';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Profile from '../pages/Profile/Profile';
 import Login from '../pages/Login/Login';
@@ -24,10 +27,34 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/game/:gameId"
+        path="/game/multiplayer/:gameId"
         element={
           <ProtectedRoute>
-            <GameRoom />
+            <MultiplayerGameRoom />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/game/computer/:gameId"
+        element={
+          <ProtectedRoute>
+            <ComputerGameRoom />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/game/room-selector"
+        element={
+          <ProtectedRoute>
+            <RoomSelector />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/game/room/:gameId"
+        element={
+          <ProtectedRoute>
+            <RoomGameRoom />
           </ProtectedRoute>
         }
       />

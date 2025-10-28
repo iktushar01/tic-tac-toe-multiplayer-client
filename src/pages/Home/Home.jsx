@@ -4,8 +4,8 @@ import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import PlayerCard from './PlayerCard';
 import MatchCard from './MatchCard';
 import { apiService } from '../../services/api';
-import { IoGameController, IoFlash, IoAddCircle, IoPeople, IoTime, IoEnter } from 'react-icons/io5';
-import { BsTrophy, BsFire, BsCheckCircleFill, BsStars } from 'react-icons/bs';
+import { IoGameController, IoFlash, IoPeople, IoTime, IoDesktop, IoEnter } from 'react-icons/io5';
+import { BsFire, BsCheckCircleFill, BsStars } from 'react-icons/bs';
 
 // Animation variants
 const fadeInUp = {
@@ -27,7 +27,6 @@ const transition = { duration: 0.6 };
 
 const Home = () => {
   const navigate = useNavigate();
-  const [roomCode, setRoomCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Sample data - memoized
@@ -66,45 +65,33 @@ const Home = () => {
   const onlineCount = onlinePlayers.filter(p => p.online).length;
 
   // Memoized handlers
-  const handleCreateGame = useCallback(async () => {
-    setLoading(true);
-    try {
-      const game = await apiService.createGame();
-      navigate(`/game/${game.gameId}`, { state: { roomCode: game.roomCode } });
-    } catch (err) {
-      console.error('Error creating game:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  const handleJoinGame = useCallback(async () => {
-    if (!roomCode) {
-      alert('Please enter a room code');
-      return;
-    }
-    setLoading(true);
-    try {
-      const game = await apiService.joinGame(roomCode);
-      navigate(`/game/${game.gameId}`, { state: { roomCode: game.roomCode } });
-    } catch (err) {
-      alert('Invalid room code');
-      console.error('Join game error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [roomCode, navigate]);
-
-  const handleQuickMatch = useCallback(async () => {
+  const handleMultiplayer = useCallback(async () => {
     setLoading(true);
     try {
       const game = await apiService.quickMatch();
-      navigate(`/game/${game.gameId}`);
+      navigate(`/game/multiplayer/${game.gameId}`);
     } catch (err) {
       console.error('Error finding match:', err);
     } finally {
       setLoading(false);
     }
+  }, [navigate]);
+
+  const handleComputerMode = useCallback(async () => {
+    setLoading(true);
+    try {
+      // For AI mode, we'll create a special game with AI
+      const game = await apiService.createGame();
+      navigate(`/game/computer/${game.gameId}`, { state: { aiMode: true, roomCode: game.roomCode } });
+    } catch (err) {
+      console.error('Error creating AI game:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  const handleCustomRoom = useCallback(() => {
+    navigate('/game/room-selector');
   }, [navigate]);
 
   return (
@@ -224,15 +211,15 @@ const Home = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-4 sm:px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-2xl w-full sm:w-auto sm:min-w-[200px] group flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleCreateGame}
+                onClick={handleMultiplayer}
                 disabled={loading}
               >
                 {loading ? (
                   <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
                 ) : (
                   <>
-                    <IoAddCircle className="text-xl sm:text-2xl group-hover:rotate-90 transition-transform" />
-                    <span>Create Game</span>
+                    <IoPeople className="text-xl sm:text-2xl group-hover:scale-110 transition-transform" />
+                    <span>Multiplayer</span>
                   </>
                 )}
               </motion.button>
@@ -241,17 +228,27 @@ const Home = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-4 sm:px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold group transition-all shadow-xl w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleQuickMatch}
+                onClick={handleComputerMode}
                 disabled={loading}
               >
                 {loading ? (
                   <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
                 ) : (
                   <>
-                    <IoFlash className="text-xl sm:text-2xl group-hover:animate-pulse" />
-                    <span>Quick Match</span>
+                    <IoDesktop className="text-xl sm:text-2xl group-hover:animate-pulse" />
+                    <span>Computer Mode</span>
                   </>
                 )}
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-semibold group transition-all shadow-xl w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleCustomRoom}
+              >
+                <IoEnter className="text-xl sm:text-2xl group-hover:rotate-12 transition-transform" />
+                <span>Custom Room</span>
               </motion.button>
             </motion.div>
           </div>
@@ -264,72 +261,13 @@ const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.6 }}
       >
-        {/* Join Game Section */}
-        <section className="mb-12">
-          <motion.div 
-            className="shadow-2xl bg-gray-800 border border-gray-700 hover:border-cyan-500/50 transition-all rounded-lg overflow-hidden"
-            whileHover={{ y: -5 }}
-          >
-            <div className="p-6 sm:p-8">
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ x: -30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.9 }}
-              >
-                <div className="p-2 bg-cyan-500/20 rounded-lg">
-                  <IoGameController className="text-3xl sm:text-4xl text-cyan-400" />
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-cyan-400">
-                  Join a Game
-                </h2>
-              </motion.div>
-              
-              <div>
-                <label className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-3 text-gray-300">
-                  <BsTrophy className="text-yellow-400 text-xl" />
-                  Enter Room Code
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="text"
-                    placeholder="Enter 4-digit code"
-                    className="px-4 py-3 w-full sm:flex-1 text-lg bg-gray-700 text-white border border-gray-600 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
-                    value={roomCode}
-                    onChange={(e) => setRoomCode(e.target.value)}
-                    maxLength={4}
-                    pattern="[0-9]*"
-                    inputMode="numeric"
-                  />
-                  <motion.button
-                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold hover:scale-105 transition-transform shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap"
-                    onClick={handleJoinGame}
-                    disabled={loading || !roomCode}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {loading ? (
-                      <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-                    ) : (
-                      <>
-                        <IoEnter className="text-xl" />
-                        <span>Join Game</span>
-                      </>
-                    )}
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Online Players */}
           <motion.section 
             className="bg-gray-800 shadow-xl hover:shadow-2xl transition-shadow border border-gray-700 rounded-lg"
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
             whileHover={{ y: -5 }}
           >
             <div className="p-6">
@@ -353,7 +291,7 @@ const Home = () => {
                     key={player.id}
                     initial={fadeInLeft.hidden}
                     animate={fadeInLeft.visible}
-                    transition={{ ...transition, delay: 1.2 + index * 0.1 }}
+                    transition={{ ...transition, delay: 1.1 + index * 0.1 }}
                   >
                     <PlayerCard
                       player={player}
@@ -371,7 +309,7 @@ const Home = () => {
             className="bg-gray-800 shadow-xl hover:shadow-2xl transition-shadow border border-gray-700 rounded-lg"
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
             whileHover={{ y: -5 }}
           >
             <div className="p-6">
@@ -387,7 +325,7 @@ const Home = () => {
                     key={match.id}
                     initial={fadeInRight.hidden}
                     animate={fadeInRight.visible}
-                    transition={{ ...transition, delay: 1.4 + index * 0.1 }}
+                    transition={{ ...transition, delay: 1.1 + index * 0.1 }}
                   >
                     <MatchCard match={match} />
                   </motion.div>
