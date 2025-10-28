@@ -31,14 +31,14 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 py-8">
+    <div className="min-h-screen bg-gray-900 py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             Profile
           </h1>
-          <p className="text-lg text-base-content/70">
+          <p className="text-lg text-gray-400">
             Manage your account and view your statistics.
           </p>
         </div>
@@ -46,27 +46,27 @@ const Profile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Info */}
           <div className="lg:col-span-2">
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
+            <div className="bg-gray-800 shadow-xl border border-gray-700 rounded-lg">
+              <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-2xl font-bold">Personal Information</h2>
+                  <h2 className="text-2xl font-bold text-white">Personal Information</h2>
                   <div className="flex gap-2">
                     {!editMode ? (
                       <button
-                        className="btn btn-primary"
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all"
                         onClick={() => setEditMode(true)}
                       >
                         Edit Profile
                       </button>
                     ) : (
                       <>
-                        <button
-                          className="btn btn-outline"
+                          <button
+                          className="px-4 py-2 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-all border border-gray-600"
                           onClick={() => setEditMode(false)}
                         >
                           Cancel
                         </button>
-                        <button className="btn btn-primary" onClick={handleSave}>
+                        <button className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all" onClick={handleSave}>
                           Save
                         </button>
                       </>
@@ -75,15 +75,15 @@ const Profile = () => {
                 </div>
 
                 <div className="flex items-center gap-6 mb-6">
-                  <div className="avatar placeholder">
-                    <div className="w-24 rounded-full bg-primary text-white text-4xl">
+                    <div className="avatar placeholder">
+                    <div className="w-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-4xl">
                       <span>{profileData.username.charAt(0).toUpperCase()}</span>
                     </div>
                   </div>
                   <div>
-                    <p className="text-lg font-bold">{profileData.username}</p>
-                    <p className="text-sm text-base-content/70">{profileData.email}</p>
-                    <p className="text-sm text-base-content/50">
+                    <p className="text-lg font-bold text-white">{profileData.username}</p>
+                    <p className="text-sm text-gray-400">{profileData.email}</p>
+                    <p className="text-sm text-gray-500">
                       Member since {new Date().getFullYear()}
                     </p>
                   </div>
@@ -91,26 +91,26 @@ const Profile = () => {
 
                 {editMode ? (
                   <div className="space-y-4">
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Username</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Username
                       </label>
                       <input
                         type="text"
-                        className="input input-bordered"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                         value={profileData.username}
                         onChange={(e) =>
                           setProfileData({ ...profileData, username: e.target.value })
                         }
                       />
                     </div>
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Email</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Email
                       </label>
                       <input
                         type="email"
-                        className="input input-bordered"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                         value={profileData.email}
                         onChange={(e) =>
                           setProfileData({ ...profileData, email: e.target.value })
@@ -120,17 +120,17 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center py-3 border-b border-base-300">
+                    <div className="flex justify-between items-center py-3 border-b border-gray-700">
                       <span className="font-semibold">Username</span>
                       <span>{profileData.username}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-base-300">
+                    <div className="flex justify-between items-center py-3 border-b border-gray-700">
                       <span className="font-semibold">Email</span>
                       <span>{profileData.email}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-base-300">
+                    <div className="flex justify-between items-center py-3 border-b border-gray-700">
                       <span className="font-semibold">Status</span>
-                      <span className="badge badge-success badge-lg">Active</span>
+                      <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-semibold">Active</span>
                     </div>
                   </div>
                 )}
@@ -142,21 +142,21 @@ const Profile = () => {
           <div className="space-y-6">
             {/* Quick Stats */}
             {stats && (
-              <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                  <h3 className="card-title mb-4">Quick Stats</h3>
+              <div className="bg-gray-800 shadow-xl border border-gray-700 rounded-lg">
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-4 text-white">Quick Stats</h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg">Rank</span>
-                      <span className="text-2xl font-bold text-primary">#{stats.rank}</span>
+                      <span className="text-lg text-white">Rank</span>
+                      <span className="text-2xl font-bold text-cyan-400">#{stats.rank}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg">Total Games</span>
-                      <span className="text-2xl font-bold">{stats.totalGames}</span>
+                      <span className="text-lg text-white">Total Games</span>
+                      <span className="text-2xl font-bold text-white">{stats.totalGames}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg">Win Rate</span>
-                      <span className="text-2xl font-bold">{stats.winRate}%</span>
+                      <span className="text-lg text-white">Win Rate</span>
+                      <span className="text-2xl font-bold text-white">{stats.winRate}%</span>
                     </div>
                   </div>
                 </div>
@@ -164,33 +164,29 @@ const Profile = () => {
             )}
 
             {/* Settings */}
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h3 className="card-title mb-4">Settings</h3>
+            <div className="bg-gray-800 shadow-xl border border-gray-700 rounded-lg">
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-4 text-white">Settings</h3>
                 <div className="space-y-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">Dark Mode</span>
-                      <span className="label-text-alt text-base-content/50">
-                        Use the toggle in the navbar
-                      </span>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Dark Mode
                     </label>
+                    <span className="text-sm text-gray-500">
+                      Application is always in dark mode
+                    </span>
                   </div>
-                  <div className="form-control">
-                    <label className="label cursor-pointer">
-                      <span className="label-text">Notifications</span>
-                      <input type="checkbox" className="toggle toggle-primary" />
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-300">
+                      Notifications
                     </label>
+                    <input type="checkbox" className="w-12 h-6 bg-gray-600 rounded-full appearance-none checked:bg-cyan-500 transition-all" />
                   </div>
-                  <div className="form-control">
-                    <label className="label cursor-pointer">
-                      <span className="label-text">Sound Effects</span>
-                      <input
-                        type="checkbox"
-                        className="toggle toggle-primary"
-                        defaultChecked
-                      />
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-300">
+                      Sound Effects
                     </label>
+                    <input type="checkbox" className="w-12 h-6 bg-gray-600 rounded-full appearance-none checked:bg-cyan-500 transition-all" defaultChecked />
                   </div>
                 </div>
               </div>

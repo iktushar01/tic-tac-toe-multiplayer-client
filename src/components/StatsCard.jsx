@@ -9,14 +9,14 @@ const StatsCard = ({ title, value, icon, color = 'primary' }) => {
   };
 
   return (
-    <div className="stat bg-base-100 rounded-xl shadow-lg hover:shadow-2xl transition-all hover:scale-105 border border-base-300">
-      <div className="stat-figure text-primary">
-        <div className={`w-16 h-16 rounded-full ${colorClasses[color]} flex items-center justify-center text-white text-3xl shadow-lg`}>
+    <div className="stat bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all hover:scale-105 border border-gray-700">
+      <div className="stat-figure text-cyan-400">
+        <div className={`w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-3xl shadow-lg`}>
           {icon}
         </div>
       </div>
-      <div className="stat-title text-base-content/70 font-semibold">{title}</div>
-      <div className="stat-value text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      <div className="stat-title text-gray-400 font-semibold">{title}</div>
+      <div className="stat-value text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
         {value}
       </div>
     </div>

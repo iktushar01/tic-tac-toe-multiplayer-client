@@ -32,10 +32,10 @@ const LeaderboardCard = ({ rank, player, stats }) => {
   };
 
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all">
-      <div className="card-body p-4">
+    <div className="bg-gray-800 shadow-md hover:shadow-xl transition-all border border-gray-700 rounded-lg">
+      <div className="p-4">
         <div className="flex items-center gap-4">
-          <div className="text-2xl font-bold text-primary w-10 text-center">
+          <div className="text-2xl font-bold text-cyan-400 w-10 text-center">
             {getRankMedal()}
           </div>
           <div className="avatar placeholder">
@@ -44,8 +44,8 @@ const LeaderboardCard = ({ rank, player, stats }) => {
             </div>
           </div>
           <div className="flex-1">
-            <h3 className="font-bold">{player.username}</h3>
-            <p className="text-sm text-base-content/70">
+            <h3 className="font-bold text-white">{player.username}</h3>
+            <p className="text-sm text-gray-400">
               {stats.wins} wins • {stats.winRate}% win rate
             </p>
           </div>

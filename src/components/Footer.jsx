@@ -1,33 +1,33 @@
 const Footer = () => {
   return (
-    <footer className="bg-base-200 mt-auto">
+    <footer className="bg-gray-900 border-t border-gray-800 mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">
-              <span className="text-primary">X-O</span> Arena
+            <h3 className="text-lg font-bold mb-4 text-white">
+              <span className="text-cyan-400">X-O</span> Arena
             </h3>
-            <p className="text-base-content/70">
+            <p className="text-gray-400">
               The ultimate multiplayer Tic Tac Toe experience. Challenge friends,
               climb the leaderboard, and dominate the arena!
             </p>
           </div>
           
           <div>
-            <h4 className="text-sm font-bold uppercase mb-4">Quick Links</h4>
+            <h4 className="text-sm font-bold uppercase mb-4 text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="link link-hover">
+                <a href="/" className="text-gray-400 hover:text-cyan-400 transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="/dashboard" className="link link-hover">
+                <a href="/dashboard" className="text-gray-400 hover:text-cyan-400 transition-colors">
                   Dashboard
                 </a>
               </li>
               <li>
-                <a href="/profile" className="link link-hover">
+                <a href="/profile" className="text-gray-400 hover:text-cyan-400 transition-colors">
                   Profile
                 </a>
               </li>
@@ -35,11 +35,11 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 className="text-sm font-bold uppercase mb-4">Connect</h4>
+            <h4 className="text-sm font-bold uppercase mb-4 text-white">Connect</h4>
             <div className="flex gap-4">
               <a
                 href="#"
-                className="btn btn-circle btn-outline"
+                className="w-10 h-10 rounded-full border border-gray-700 hover:border-cyan-400 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all"
                 aria-label="Twitter"
               >
                 <svg
@@ -53,7 +53,7 @@ const Footer = () => {
               </a>
               <a
                 href="#"
-                className="btn btn-circle btn-outline"
+                className="w-10 h-10 rounded-full border border-gray-700 hover:border-cyan-400 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all"
                 aria-label="GitHub"
               >
                 <svg
@@ -67,7 +67,7 @@ const Footer = () => {
               </a>
               <a
                 href="#"
-                className="btn btn-circle btn-outline"
+                className="w-10 h-10 rounded-full border border-gray-700 hover:border-cyan-400 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all"
                 aria-label="Discord"
               >
                 <svg
@@ -83,9 +83,9 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="divider"></div>
+        <div className="border-t border-gray-800 my-8"></div>
         
-        <div className="text-center text-base-content/70">
+        <div className="text-center text-gray-400">
           <p>© 2024 X-O Arena. All rights reserved.</p>
         </div>
       </div>

@@ -65,7 +65,7 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="grid grid-cols-3 gap-3 p-6 bg-gradient-to-br from-base-100 to-base-200 rounded-2xl shadow-2xl">
+      <div className="grid grid-cols-3 gap-3 p-6 bg-gray-800 rounded-2xl shadow-2xl border border-gray-700">
         {board.map((cell, index) => {
           const isWinning = winningLine.includes(index);
           return (
@@ -73,16 +73,16 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
               key={index}
               onClick={() => handleClick(index)}
               disabled={disabled || board[index] || winner}
-              className={`w-24 h-24 text-5xl font-bold rounded-xl transition-all shadow-lg hover:scale-105
+              className={`w-20 h-20 sm:w-24 sm:h-24 text-4xl sm:text-5xl font-bold rounded-xl transition-all shadow-lg hover:scale-105
                 ${cell === 'X'
-                  ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-500/50'
+                  ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/50'
                   : cell === 'O'
                   ? 'bg-gradient-to-br from-red-500 to-red-600 text-white shadow-red-500/50'
-                  : 'bg-base-300 hover:bg-gradient-to-br hover:from-primary/20 hover:to-secondary/20'
+                  : 'bg-gray-700 hover:bg-gray-600 border border-gray-600'
                 }
                 ${isWinning ? 'ring-4 ring-yellow-400 scale-110 animate-pulse' : ''}
-                ${!board[index] && !winner ? 'hover:shadow-xl' : ''}
-                ${disabled || winner ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                ${!board[index] && !winner ? 'hover:shadow-xl cursor-pointer' : ''}
+                ${disabled || winner ? 'cursor-not-allowed opacity-50' : ''}
               `}
             >
               {cell}
@@ -92,7 +92,13 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
       </div>
 
       {winner && (
-        <div className={`alert shadow-lg animate-bounce ${winner === playerSymbol ? 'alert-success' : winner === 'Draw' ? 'alert-warning' : 'alert-error'}`}>
+        <div className={`px-8 py-4 rounded-lg shadow-lg animate-bounce ${
+          winner === playerSymbol 
+            ? 'bg-green-900 border border-green-700 text-green-200' 
+            : winner === 'Draw' 
+            ? 'bg-yellow-900 border border-yellow-700 text-yellow-200' 
+            : 'bg-red-900 border border-red-700 text-red-200'
+        }`}>
           <span className="text-2xl font-bold">
             {winner === 'Draw'
               ? '🤝 It\'s a Draw!'
@@ -105,7 +111,7 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
 
       <div className="flex gap-3">
         <button 
-          className="btn btn-primary btn-lg hover:scale-105 transition-transform shadow-xl" 
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold hover:scale-105 transition-all shadow-xl text-base sm:text-lg" 
           onClick={resetBoard}
         >
           🎮 New Game
@@ -116,4 +122,3 @@ const TicTacToeBoard = ({ onMove, disabled, currentPlayer, playerSymbol }) => {
 };
 
 export default TicTacToeBoard;
-

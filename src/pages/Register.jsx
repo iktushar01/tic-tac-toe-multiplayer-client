@@ -68,99 +68,101 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center py-12 px-4">
-      <div className="card bg-base-100 shadow-2xl w-full max-w-md">
-        <div className="card-body">
-          <h1 className="text-3xl font-bold text-center mb-2">
-            Join <span className="text-primary">X-O Arena</span>
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4">
+      <div className="bg-gray-800 shadow-2xl w-full max-w-md border border-gray-700 rounded-lg overflow-hidden">
+        <div className="p-8">
+          <h1 className="text-3xl font-bold text-center mb-2 text-white">
+            Join <span className="text-cyan-400">X-O Arena</span>
           </h1>
-          <p className="text-center text-base-content/70 mb-8">
+          <p className="text-center text-gray-400 mb-8">
             Create your account to start playing
           </p>
 
           {error && (
-            <div className="alert alert-error">
-              <span>{error}</span>
+            <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-4">
+              {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Username</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Username
               </label>
               <input
                 type="text"
                 name="username"
                 placeholder="Your username"
-                className="input input-bordered"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={formData.username}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Email
               </label>
               <input
                 type="email"
                 name="email"
                 placeholder="email@example.com"
-                className="input input-bordered"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Password
               </label>
               <input
                 type="password"
                 name="password"
                 placeholder="At least 6 characters"
-                className="input input-bordered"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={formData.password}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Confirm Password</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Confirm Password
               </label>
               <input
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm your password"
-                className="input input-bordered"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="form-control mt-6">
-              <button
-                type="submit"
-                className="btn btn-primary w-full"
-                disabled={loading}
-              >
-                {loading ? 'Creating account...' : 'Sign Up'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? 'Creating account...' : 'Sign Up'}
+            </button>
           </form>
 
-          <div className="divider">OR</div>
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-gray-700"></div>
+            <span className="px-4 text-gray-400">OR</span>
+            <div className="flex-1 border-t border-gray-700"></div>
+          </div>
 
           <button
             onClick={handleGoogleLogin}
-            className="btn btn-outline w-full"
+            className="w-full px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all border border-gray-600 flex items-center justify-center gap-2 disabled:opacity-50"
             disabled={loading}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -184,11 +186,13 @@ const Register = () => {
             Sign up with Google
           </button>
 
-          <div className="divider"></div>
+          <div className="flex items-center mt-6">
+            <div className="flex-1 border-t border-gray-700"></div>
+          </div>
 
-          <p className="text-center text-sm">
+          <p className="text-center text-sm text-gray-400 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="link link-primary">
+            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">
               Sign in
             </Link>
           </p>

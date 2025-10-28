@@ -39,14 +39,14 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-200 py-8">
+    <div className="min-h-screen bg-gray-900 py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             Dashboard
           </h1>
-          <p className="text-lg text-base-content/70">
+          <p className="text-lg text-gray-400">
             Here's your performance overview and game statistics.
           </p>
         </div>
@@ -83,11 +83,11 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Match History */}
           <section>
-            <h2 className="text-3xl font-bold mb-6 text-primary">🏆 Recent Match History</h2>
-            <div className="card bg-base-100 shadow-2xl border border-primary/20">
-              <div className="card-body">
+          <h2 className="text-3xl font-bold mb-6 text-cyan-400">🏆 Recent Match History</h2>
+          <div className="bg-gray-800 shadow-2xl border border-gray-700 rounded-lg">
+              <div className="p-6">
                 {matchHistory.length === 0 ? (
-                  <p className="text-center text-base-content/50 py-8">
+                  <p className="text-center text-gray-400 py-8">
                     No matches yet. Start playing to see your history!
                   </p>
                 ) : (
@@ -103,11 +103,11 @@ const Dashboard = () => {
 
           {/* Leaderboard */}
           <section>
-            <h2 className="text-3xl font-bold mb-6 text-primary">🥇 Top Players</h2>
-            <div className="card bg-base-100 shadow-2xl border border-primary/20">
-              <div className="card-body">
+          <h2 className="text-3xl font-bold mb-6 text-cyan-400">🥇 Top Players</h2>
+          <div className="bg-gray-800 shadow-2xl border border-gray-700 rounded-lg">
+              <div className="p-6">
                 {leaderboard.length === 0 ? (
-                  <p className="text-center text-base-content/50 py-8">
+                  <p className="text-center text-gray-400 py-8">
                     No leaderboard data available.
                   </p>
                 ) : (
@@ -129,25 +129,25 @@ const Dashboard = () => {
 
         {/* Win/Loss Chart Placeholder */}
         <div className="mt-8">
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="text-2xl font-bold mb-4">Performance Overview</h2>
+          <div className="bg-gray-800 shadow-xl border border-gray-700 rounded-lg">
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-4 text-white">Performance Overview</h2>
               <div className="flex justify-center items-center h-64">
                 <div className="flex items-center justify-center gap-8">
                   <div className="text-center">
                     <div className="text-4xl mb-2">✅</div>
-                    <p className="text-2xl font-bold text-success">{stats.wins}</p>
-                    <p className="text-sm text-base-content/70">Wins</p>
+                    <p className="text-2xl font-bold text-green-400">{stats.wins}</p>
+                    <p className="text-sm text-gray-400">Wins</p>
                   </div>
                   <div className="text-center">
                     <div className="text-4xl mb-2">❌</div>
-                    <p className="text-2xl font-bold text-error">{stats.losses}</p>
-                    <p className="text-sm text-base-content/70">Losses</p>
+                    <p className="text-2xl font-bold text-red-400">{stats.losses}</p>
+                    <p className="text-sm text-gray-400">Losses</p>
                   </div>
                   <div className="text-center">
                     <div className="text-4xl mb-2">🤝</div>
-                    <p className="text-2xl font-bold text-warning">{stats.draws}</p>
-                    <p className="text-sm text-base-content/70">Draws</p>
+                    <p className="text-2xl font-bold text-orange-400">{stats.draws}</p>
+                    <p className="text-sm text-gray-400">Draws</p>
                   </div>
                 </div>
               </div>

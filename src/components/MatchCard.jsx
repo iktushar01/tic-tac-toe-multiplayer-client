@@ -4,13 +4,13 @@ const MatchCard = ({ match }) => {
   const getResultColor = (result) => {
     switch (result) {
       case 'Win':
-        return 'text-success';
+        return 'text-green-400';
       case 'Loss':
-        return 'text-error';
+        return 'text-red-400';
       case 'Draw':
-        return 'text-warning';
+        return 'text-yellow-400';
       default:
-        return 'text-base-content';
+        return 'text-white';
     }
   };
 
@@ -28,20 +28,20 @@ const MatchCard = ({ match }) => {
   };
 
   return (
-    <div className="card bg-base-100 shadow hover:shadow-md transition-shadow">
-      <div className="card-body p-4">
+    <div className="bg-gray-800 shadow hover:shadow-md transition-shadow border border-gray-700 rounded-lg">
+      <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="avatar placeholder">
-              <div className="w-10 rounded-full bg-neutral text-white">
+              <div className="w-10 rounded-full bg-gray-700 text-white">
                 <span className="text-xs">
                   {match.opponent.substring(0, 2).toUpperCase()}
                 </span>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold">{match.opponent}</h4>
-              <p className="text-xs text-base-content/70">
+              <h4 className="font-semibold text-white">{match.opponent}</h4>
+              <p className="text-xs text-gray-400">
                 {formatDate(match.date)}
               </p>
             </div>
@@ -50,7 +50,7 @@ const MatchCard = ({ match }) => {
             <p className={`font-bold ${getResultColor(match.result)}`}>
               {getResultIcon(match.result)} {match.result}
             </p>
-            <p className="text-xs text-base-content/70">
+            <p className="text-xs text-gray-400">
               {match.moves} moves
             </p>
           </div>
