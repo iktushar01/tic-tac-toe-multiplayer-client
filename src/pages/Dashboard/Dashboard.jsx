@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import StatsCard from '../components/StatsCard';
-import MatchCard from '../components/MatchCard';
-import LeaderboardCard from '../components/LeaderboardCard';
-import { apiService } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import StatsCard from './StatsCard';
+import MatchCard from './MatchCard';
+import LeaderboardCard from './LeaderboardCard';
+import { apiService } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { IoStatsChart, IoTrophy } from 'react-icons/io5';
 import { BsGraphDown, BsTrophyFill, BsPeopleFill, BsClockHistory } from 'react-icons/bs';
 

@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import PlayerCard from '../components/PlayerCard';
-import MatchCard from '../components/MatchCard';
-import { apiService } from '../services/api';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
+import PlayerCard from './PlayerCard';
+import MatchCard from './MatchCard';
+import { apiService } from '../../services/api';
 import { IoGameController, IoFlash, IoAddCircle, IoPeople, IoTime, IoEnter } from 'react-icons/io5';
 import { BsTrophy, BsFire, BsCheckCircleFill, BsStars } from 'react-icons/bs';
 
@@ -114,7 +114,7 @@ const Home = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="hero bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 backdrop-blur-md text-white py-12 sm:py-20 relative overflow-hidden shadow-2xl"
+        className="hero  from-gray-900 via-gray-800 to-gray-700 backdrop-blur-md text-white py-12 sm:py-20 relative overflow-hidden shadow-2xl"
       >
         {/* Animated Background */}
         <motion.div 

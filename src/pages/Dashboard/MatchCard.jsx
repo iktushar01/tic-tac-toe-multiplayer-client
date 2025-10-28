@@ -1,4 +1,4 @@
-import { formatDate } from '../utils/helpers';
+import { formatDate } from '../../utils/helpers';
 
 const MatchCard = ({ match }) => {
   const getResultColor = (result) => {

@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
-import Home from '../pages/Home';
-import GameRoom from '../pages/GameRoom';
-import Dashboard from '../pages/Dashboard';
-import Profile from '../pages/Profile';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
+import Home from '../pages/Home/Home';
+import GameRoom from '../pages/GameRoom/GameRoom';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import Profile from '../pages/Profile/Profile';
+import Login from '../pages/Login/Login';
+import Register from '../pages/Register/Register';
 
 const AppRoutes = () => {
   return (

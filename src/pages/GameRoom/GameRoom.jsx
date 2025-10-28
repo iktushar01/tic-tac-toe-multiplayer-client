@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import TicTacToeBoard from '../components/TicTacToeBoard';
-import { useAuth } from '../context/AuthContext';
+import TicTacToeBoard from './TicTacToeBoard';
+import { useAuth } from '../../context/AuthContext';
 
 const GameRoom = () => {
   const { gameId } = useParams();

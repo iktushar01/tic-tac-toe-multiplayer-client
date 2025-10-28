@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import StatsCard from '../components/StatsCard';
-import { apiService } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { apiService } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
   const { user } = useAuth();

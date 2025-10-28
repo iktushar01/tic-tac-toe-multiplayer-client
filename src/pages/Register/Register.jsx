@@ -1,31 +1,54 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Register = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    if (!formData.username || !formData.email || !formData.password) {
       setError('Please fill in all fields');
       return;
     }
 
     setLoading(true);
     try {
-      await login(email, password);
+      await register(formData.email, formData.password, formData.username);
       navigate('/');
     } catch (error) {
-      setError(error.message || 'Failed to log in');
+      setError(error.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -38,7 +61,7 @@ const Login = () => {
       await loginWithGoogle();
       navigate('/');
     } catch (error) {
-      setError(error.message || 'Failed to log in with Google');
+      setError(error.message || 'Failed to register with Google');
     } finally {
       setLoading(false);
     }
@@ -49,10 +72,10 @@ const Login = () => {
       <div className="bg-gray-800 shadow-2xl w-full max-w-md border border-gray-700 rounded-lg overflow-hidden">
         <div className="p-8">
           <h1 className="text-3xl font-bold text-center mb-2 text-white">
-            Welcome to <span className="text-cyan-400">X-O Arena</span>
+            Join <span className="text-cyan-400">X-O Arena</span>
           </h1>
           <p className="text-center text-gray-400 mb-8">
-            Sign in to continue playing
+            Create your account to start playing
           </p>
 
           {error && (
@@ -64,14 +87,30 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                placeholder="Your username"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
                 type="email"
+                name="email"
                 placeholder="email@example.com"
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -82,10 +121,26 @@ const Login = () => {
               </label>
               <input
                 type="password"
-                placeholder="Enter your password"
+                name="password"
+                placeholder="At least 6 characters"
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -95,7 +150,7 @@ const Login = () => {
               className="w-full px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
 
@@ -110,7 +165,7 @@ const Login = () => {
             className="w-full px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all border border-gray-600 flex items-center justify-center gap-2 disabled:opacity-50"
             disabled={loading}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -128,7 +183,7 @@ const Login = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Sign in with Google
+            Sign up with Google
           </button>
 
           <div className="flex items-center mt-6">
@@ -136,9 +191,9 @@ const Login = () => {
           </div>
 
           <p className="text-center text-sm text-gray-400 mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+              Sign in
             </Link>
           </p>
         </div>
@@ -147,4 +202,5 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
+
