@@ -229,5 +229,31 @@ export const apiService = {
 
     return await response.json();
   },
+
+  // Game Result API
+  saveGameResult: async (result, opponent = 'Computer', moves = 0, gameMode = 'computer') => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/game/result`, {
+      method: 'POST',
+      body: JSON.stringify({ result, opponent, moves, gameMode }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to save game result');
+    }
+
+    return await response.json();
+  },
+
+  // Leaderboard API
+  getLeaderboard: async (sortBy = 'wins', limit = 50) => {
+    const response = await fetch(`${API_BASE_URL}/users/leaderboard?sortBy=${sortBy}&limit=${limit}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch leaderboard');
+    }
+
+    return await response.json();
+  },
 };
 
