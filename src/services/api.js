@@ -196,15 +196,53 @@ export const apiService = {
     return await response.json();
   },
 
-  respondToFriendRequest: async (userId, action) => {
-    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/respond/${userId}`, {
+  cancelFriendRequest: async (userId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/cancel/${userId}`, {
       method: 'POST',
-      body: JSON.stringify({ action }),
     });
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Failed to respond to friend request');
+      throw new Error(errorData.error || 'Failed to cancel friend request');
+    }
+
+    return await response.json();
+  },
+
+  acceptFriendRequest: async (userId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/accept/${userId}`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to accept friend request');
+    }
+
+    return await response.json();
+  },
+
+  rejectFriendRequest: async (userId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/reject/${userId}`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to reject friend request');
+    }
+
+    return await response.json();
+  },
+
+  unfriend: async (userId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/unfriend/${userId}`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to unfriend');
     }
 
     return await response.json();
@@ -220,17 +258,95 @@ export const apiService = {
     return await response.json();
   },
 
-  getFriendRequests: async () => {
-    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/requests`);
+  getReceivedFriendRequests: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/requests/received`);
     
     if (!response.ok) {
-      throw new Error('Failed to fetch friend requests');
+      throw new Error('Failed to fetch received friend requests');
     }
 
     return await response.json();
   },
 
-  // Game Result API
+  getSentFriendRequests: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/friends/requests/sent`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch sent friend requests');
+    }
+
+    return await response.json();
+  },
+
+  // Computer Game APIs
+  createComputerGame: async (boardSize, aiDifficulty, playerSymbol = 'X') => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/computer-game/create`, {
+      method: 'POST',
+      body: JSON.stringify({ boardSize, aiDifficulty, playerSymbol }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to create computer game');
+    }
+
+    return await response.json();
+  },
+
+  makeComputerGameMove: async (gameId, index, player) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/computer-game/move`, {
+      method: 'POST',
+      body: JSON.stringify({ gameId, index, player }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to make move');
+    }
+
+    return await response.json();
+  },
+
+  completeComputerGame: async (gameId, result, winner, finalBoard) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/computer-game/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ gameId, result, winner, finalBoard }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to complete game');
+    }
+
+    return await response.json();
+  },
+
+  getComputerGameHistory: async (page = 1, limit = 20, status = null) => {
+    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+    if (status) params.append('status', status);
+    
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/computer-games?${params}`);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to fetch computer games');
+    }
+
+    return await response.json();
+  },
+
+  getComputerGameDetails: async (gameId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/computer-game/${gameId}`);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to fetch game details');
+    }
+
+    return await response.json();
+  },
+
+  // Game Result API - Legacy endpoint for backward compatibility
   saveGameResult: async (result, opponent = 'Computer', moves = 0, gameMode = 'computer') => {
     const response = await authenticatedFetch(`${API_BASE_URL}/users/game/result`, {
       method: 'POST',

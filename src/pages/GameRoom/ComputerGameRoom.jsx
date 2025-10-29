@@ -39,6 +39,7 @@ const ComputerGameRoom = () => {
   const [player2Name] = useState('Computer');
   const [totalMoves, setTotalMoves] = useState(0);
   const [gameSaved, setGameSaved] = useState(false);
+  const [currentGameId, setCurrentGameId] = useState(null);
 
   const boardSizeOptions = getBoardSizeOptions();
 
@@ -47,43 +48,69 @@ const ComputerGameRoom = () => {
     boardRef.current = createBoard(boardSize);
   }, [boardSize]);
 
-  const handleMove = (index, result, board) => {
+  const handleMove = async (index, result, board) => {
     console.log('Move made:', { index, result, board, currentPlayer });
     boardRef.current = board;
     setTotalMoves(prev => prev + 1);
     
+    // Save move to server if game is active
+    if (currentGameId && gameState === 'playing') {
+      try {
+        await apiService.makeComputerGameMove(currentGameId, index, currentPlayer);
+      } catch (error) {
+        console.error('Failed to save move:', error);
+      }
+    }
+    
     if (result) {
       setGameState('finished');
       // Save game result to database
-      saveGameResult(result);
+      await saveGameResult(result, board);
     } else {
       // Switch turn
       setCurrentPlayer(prev => prev === 'X' ? 'O' : 'X');
     }
   };
 
-  const saveGameResult = async (result) => {
+  const saveGameResult = async (result, finalBoard) => {
     if (gameSaved || !user) return;
     setGameSaved(true);
 
     try {
       let gameResult;
+      let winner = null;
+      
       if (result === 'Draw') {
         gameResult = 'draw';
+        winner = 'draw';
       } else if (result === playerSymbol) {
         gameResult = 'win';
+        winner = playerSymbol;
       } else {
         gameResult = 'loss';
+        winner = playerSymbol === 'X' ? 'O' : 'X';
       }
 
-      await apiService.saveGameResult(
-        gameResult, 
-        'Computer', 
-        totalMoves + 1, 
-        `computer-${boardSize}x${boardSize}-${aiDifficulty}`
-      );
+      // Complete the game in the database
+      if (currentGameId) {
+        await apiService.completeComputerGame(
+          currentGameId,
+          gameResult,
+          winner,
+          finalBoard || boardRef.current
+        );
+        console.log('Game completed successfully with ID:', currentGameId);
+      } else {
+        // Fallback to legacy method if no game ID
+        await apiService.saveGameResult(
+          gameResult, 
+          'Computer', 
+          totalMoves + 1, 
+          `computer-${boardSize}x${boardSize}-${aiDifficulty}`
+        );
+        console.log('Game result saved using legacy method');
+      }
       
-      console.log('Game result saved successfully');
     } catch (error) {
       console.error('Failed to save game result:', error);
     }
@@ -97,17 +124,33 @@ const ComputerGameRoom = () => {
     aiMovePendingRef.current = false;
     setTotalMoves(0);
     setGameSaved(false);
+    setCurrentGameId(null);
   };
 
-  const handleBoardSizeChange = (size) => {
+  const handleBoardSizeChange = async (size) => {
     setBoardSize(size);
     setShowBoardSelector(false);
     boardRef.current = createBoard(size);
     resetGame();
+    
+    // Create new game in database
+    await createNewGame(size, aiDifficulty);
   };
 
   const handleDifficultyChange = (difficulty) => {
     setAiDifficulty(difficulty);
+  };
+
+  const createNewGame = async (boardSize, difficulty) => {
+    if (!user) return;
+    
+    try {
+      const response = await apiService.createComputerGame(boardSize, difficulty, playerSymbol);
+      setCurrentGameId(response.gameId);
+      console.log('New game created with ID:', response.gameId);
+    } catch (error) {
+      console.error('Failed to create new game:', error);
+    }
   };
 
   const startNewGame = () => {
