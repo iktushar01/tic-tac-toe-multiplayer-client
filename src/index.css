@@ -1,5 +1,43 @@
 @import "tailwindcss";
 
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Animations */
 @keyframes gradient {
   0%, 100% {
     background-position: 0% 50%;
@@ -35,28 +73,74 @@
   animation: shimmer 3s linear infinite;
 }
 
+/* Responsive Utilities */
+.container-responsive {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 /* SweetAlert2 Custom Styles */
 .swal2-popup {
   background: #1f2937 !important;
   border: 2px solid #374151 !important;
   border-radius: 1rem !important;
+  max-width: 90vw !important;
 }
 
 .swal2-title {
   color: #ffffff !important;
+  font-size: 1.5rem !important;
+}
+
+@media (min-width: 640px) {
+  .swal2-title {
   font-size: 2rem !important;
+  }
 }
 
 .swal2-html-container {
   color: #d1d5db !important;
+  font-size: 0.875rem !important;
+}
+
+@media (min-width: 640px) {
+  .swal2-html-container {
+    font-size: 1rem !important;
+  }
 }
 
 .swal2-confirm {
   background: linear-gradient(to right, #06b6d4, #3b82f6) !important;
   border: none !important;
-  padding: 0.75rem 2rem !important;
+  padding: 0.625rem 1.5rem !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
+  font-size: 0.875rem !important;
+}
+
+@media (min-width: 640px) {
+  .swal2-confirm {
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+  }
 }
 
 .swal2-confirm:hover {
@@ -76,12 +160,22 @@
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-in-out;
+  padding: 1rem;
 }
 
 .modal-content {
   position: relative;
   outline: none;
   animation: slideIn 0.3s ease-out;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+    max-width: 90vw;
+  }
 }
 
 @keyframes fadeIn {
@@ -101,5 +195,43 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Mobile Touch Improvements */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
   }
 }

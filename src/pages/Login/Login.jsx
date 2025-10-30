@@ -45,13 +45,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4">
-      <div className="bg-gray-800 shadow-2xl w-full max-w-md border border-gray-700 rounded-lg overflow-hidden">
-        <div className="p-8">
-          <h1 className="text-3xl font-bold text-center mb-2 text-white">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-800 shadow-2xl w-full max-w-md border border-gray-700 rounded-lg sm:rounded-xl overflow-hidden">
+        <div className="p-6 sm:p-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-white">
             Welcome to <span className="text-cyan-400">X-O Arena</span>
           </h1>
-          <p className="text-center text-gray-400 mb-8">
+          <p className="text-center text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
             Sign in to continue playing
           </p>
 
@@ -61,15 +61,15 @@ const Login = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -77,13 +77,13 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <input
                 type="password"
                 placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -92,7 +92,7 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50"
+              className="w-full px-4 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 text-sm sm:text-base"
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign In'}
@@ -107,10 +107,10 @@ const Login = () => {
 
           <button
             onClick={handleGoogleLogin}
-            className="w-full px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all border border-gray-600 flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full px-4 py-2.5 sm:py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all border border-gray-600 flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
             disabled={loading}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -135,9 +135,9 @@ const Login = () => {
             <div className="flex-1 border-t border-gray-700"></div>
           </div>
 
-          <p className="text-center text-sm text-gray-400 mt-6">
+          <p className="text-center text-xs sm:text-sm text-gray-400 mt-4 sm:mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+            <Link to="/register" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium">
               Sign up
             </Link>
           </p>

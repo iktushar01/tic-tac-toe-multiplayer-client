@@ -371,5 +371,117 @@ export const apiService = {
 
     return await response.json();
   },
+
+  // ==================== COIN BETTING SYSTEM ====================
+
+  // Get coin balance
+  getCoinBalance: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/balance`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch coin balance');
+    }
+
+    return await response.json();
+  },
+
+  // Place bet
+  placeBet: async (betAmount, gameId) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/bet/place`, {
+      method: 'POST',
+      body: JSON.stringify({ betAmount, gameId }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to place bet');
+    }
+
+    return await response.json();
+  },
+
+  // Complete bet after game ends
+  completeBet: async (betAmount, result, gameId = null) => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/bet/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ betAmount, result, gameId }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to complete bet');
+    }
+
+    return await response.json();
+  },
+
+  // Add coins (admin/reward)
+  addCoins: async (amount, reason = 'reward') => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/add`, {
+      method: 'POST',
+      body: JSON.stringify({ amount, reason }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to add coins');
+    }
+
+    return await response.json();
+  },
+
+  // Deduct coins (admin)
+  deductCoins: async (amount, reason = 'deduction') => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/deduct`, {
+      method: 'POST',
+      body: JSON.stringify({ amount, reason }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to deduct coins');
+    }
+
+    return await response.json();
+  },
+
+  // Reset coins
+  resetCoins: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/reset`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to reset coins');
+    }
+
+    return await response.json();
+  },
+
+  // Daily coin claim
+  claimDailyCoins: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/daily-claim`, {
+      method: 'POST',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || errorData.message || 'Failed to claim daily reward');
+    }
+
+    return await response.json();
+  },
+
+  // Check daily claim status
+  getDailyClaimStatus: async () => {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/coins/daily-claim/status`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to check daily claim status');
+    }
+
+    return await response.json();
+  },
 };
 

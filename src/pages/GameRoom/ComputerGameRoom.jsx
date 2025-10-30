@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
+import { motion, AnimatePresence } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import EnhancedTicTacToeBoard from './EnhancedTicTacToeBoard';
+import BettingPanel from '../../components/BettingPanel';
+import BettingResultModal from '../../components/BettingResultModal';
 import { getAIMove, getRandomEmptyCell, createBoard, getBoardSizeOptions, getWinRequirement } from '../../GameLogic/enhancedGameLogic';
 import { apiService } from '../../services/api';
 import { 
@@ -12,7 +14,8 @@ import {
   IoCheckmark,
   IoGrid,
   IoSparkles,
-  IoRocket
+  IoRocket,
+  IoCash
 } from 'react-icons/io5';
 import { 
   FaRobot, 
@@ -24,6 +27,7 @@ import {
 
 const ComputerGameRoom = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const [currentPlayer, setCurrentPlayer] = useState('X');
   const [gameState, setGameState] = useState('playing');
@@ -40,6 +44,13 @@ const ComputerGameRoom = () => {
   const [totalMoves, setTotalMoves] = useState(0);
   const [gameSaved, setGameSaved] = useState(false);
   const [currentGameId, setCurrentGameId] = useState(null);
+  
+  // Betting system states
+  const [bettingMode, setBettingMode] = useState(false);
+  const [showBettingPanel, setShowBettingPanel] = useState(false);
+  const [currentBet, setCurrentBet] = useState(null);
+  const [showBettingResult, setShowBettingResult] = useState(false);
+  const [bettingTransaction, setBettingTransaction] = useState(null);
 
   const boardSizeOptions = getBoardSizeOptions();
 
@@ -110,6 +121,18 @@ const ComputerGameRoom = () => {
         );
         console.log('Game result saved using legacy method');
       }
+
+      // If betting mode, process the bet
+      if (bettingMode && currentBet) {
+        try {
+          const betResult = await apiService.completeBet(currentBet, gameResult, currentGameId);
+          setBettingTransaction(betResult);
+          setShowBettingResult(true);
+          console.log('Bet completed:', betResult);
+        } catch (error) {
+          console.error('Failed to complete bet:', error);
+        }
+      }
       
     } catch (error) {
       console.error('Failed to save game result:', error);
@@ -125,16 +148,33 @@ const ComputerGameRoom = () => {
     setTotalMoves(0);
     setGameSaved(false);
     setCurrentGameId(null);
+    
+    // Reset betting states if in betting mode
+    if (bettingMode) {
+      setCurrentBet(null);
+      setShowBettingPanel(true);
+      setBettingTransaction(null);
+      setShowBettingResult(false);
+    }
   };
 
   const handleBoardSizeChange = async (size) => {
     setBoardSize(size);
-    setShowBoardSelector(false);
     boardRef.current = createBoard(size);
-    resetGame();
+  };
+
+  const handleStartGame = async (withBetting = false) => {
+    setBettingMode(withBetting);
+    setShowBoardSelector(false);
     
-    // Create new game in database
-    await createNewGame(size, aiDifficulty);
+    if (withBetting) {
+      // Show betting panel to select bet amount
+      setShowBettingPanel(true);
+    } else {
+      // Start game immediately without betting
+      resetGame();
+      await createNewGame(boardSize, aiDifficulty);
+    }
   };
 
   const handleDifficultyChange = (difficulty) => {
@@ -153,11 +193,52 @@ const ComputerGameRoom = () => {
     }
   };
 
+  const handleBetPlaced = async (betAmount) => {
+    try {
+      setCurrentBet(betAmount);
+      setShowBettingPanel(false);
+      
+      // Create new game in database after bet is placed
+      await createNewGame(boardSize, aiDifficulty);
+      
+      console.log('Bet placed:', betAmount);
+    } catch (error) {
+      console.error('Error starting game with bet:', error);
+      setShowBettingPanel(true);
+    }
+  };
+
+  const handleCancelBetting = () => {
+    setBettingMode(false);
+    setShowBettingPanel(false);
+    setCurrentBet(null);
+    setShowBoardSelector(true);
+  };
+
+  const handlePlayAgain = () => {
+    setShowBettingResult(false);
+    setBettingTransaction(null);
+    resetGame();
+  };
+
+  const handleCloseBettingResult = () => {
+    setShowBettingResult(false);
+    setBettingTransaction(null);
+  };
+
   const startNewGame = () => {
     setShowBoardSelector(true);
     setGameState('playing');
     setCurrentPlayer('X');
     aiMovePendingRef.current = false;
+    
+    // Reset betting states
+    if (bettingMode) {
+      setCurrentBet(null);
+      setShowBettingPanel(false);
+      setBettingTransaction(null);
+      setShowBettingResult(false);
+    }
   };
 
   // Handle AI move
@@ -201,6 +282,21 @@ const ComputerGameRoom = () => {
   const leaveRoom = () => {
     navigate('/');
   };
+
+  // Show betting panel if in betting mode and no bet placed yet
+  if (bettingMode && showBettingPanel) {
+    return (
+      <div className="min-h-screen bg-gray-900 py-8">
+        <div className="container mx-auto px-4 lg:px-8 max-w-2xl">
+          <BettingPanel
+            onBetPlaced={handleBetPlaced}
+            onCancel={handleCancelBetting}
+            gameId={currentGameId}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (showBoardSelector) {
     return (
@@ -267,7 +363,7 @@ const ComputerGameRoom = () => {
             </div>
 
             {/* Board Size Selection */}
-            <div className="mb-10">
+            <div className="mb-8">
               <div className="flex items-center gap-2 mb-5">
                 <IoGrid className="text-2xl text-cyan-400" />
                 <h3 className="text-2xl font-semibold text-white">Board Size</h3>
@@ -361,33 +457,100 @@ const ComputerGameRoom = () => {
               </div>
             </div>
 
-            {/* Game Info */}
+            {/* Game Mode Selection */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
+              className="mb-8"
+            >
+              <div className="flex items-center gap-2 mb-5">
+                <IoRocket className="text-2xl text-yellow-400" />
+                <h3 className="text-2xl font-semibold text-white">Choose Game Mode</h3>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Play for Free */}
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleStartGame(false)}
+                  className="bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 border-2 border-purple-400 rounded-xl p-6 text-left transition-all shadow-xl"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-3 bg-white/20 rounded-lg">
+                      <FaRobot className="text-3xl text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-white">Play for Free</h4>
+                      <p className="text-purple-200 text-sm">Casual game, no betting</p>
+                    </div>
+                  </div>
+                  <div className="text-white/80 text-sm">
+                    • No coins required<br />
+                    • Just play and have fun<br />
+                    • Stats still tracked
+                  </div>
+                </motion.button>
+
+                {/* Play with Betting */}
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleStartGame(true)}
+                  className="bg-gradient-to-br from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 border-2 border-yellow-400 rounded-xl p-6 text-left transition-all shadow-xl relative overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-lg"
+                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    WIN COINS!
+                  </motion.div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-3 bg-white/20 rounded-lg">
+                      <IoCash className="text-3xl text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-white">Play with Bet</h4>
+                      <p className="text-orange-100 text-sm">Win coins or lose them!</p>
+                    </div>
+                  </div>
+                  <div className="text-white/80 text-sm">
+                    • 🏆 Win: +100% profit (2x)<br />
+                    • 🤝 Draw: +50% refund<br />
+                    • 💀 Lose: -100% (bet lost)
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Game Info */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
               className="bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600 rounded-xl p-6"
             >
               <div className="flex items-center gap-2 mb-4">
-                <IoRocket className="text-2xl text-yellow-400" />
-                <h4 className="text-xl font-semibold text-white">Game Rules</h4>
+                <IoTrophy className="text-2xl text-yellow-400" />
+                <h4 className="text-lg font-semibold text-white">Game Rules</h4>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-gray-300">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 text-gray-300 text-sm">
                     <FaUser className="text-cyan-400" />
                     <span>You play as <span className="font-bold text-cyan-400">X</span></span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-300">
+                  <div className="flex items-center gap-3 text-gray-300 text-sm">
                     <FaRobot className="text-purple-400" />
                     <span>Computer plays as <span className="font-bold text-purple-400">O</span></span>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  {boardSizeOptions.map((option) => (
+                <div className="space-y-2">
+                  {boardSizeOptions.filter(opt => opt.value === boardSize).map((option) => (
                     <div key={option.value} className="flex items-center gap-3 text-gray-300 text-sm">
-                      <IoTrophy className="text-yellow-400" />
-                      <span><span className="font-bold">{option.label}</span>: Get {option.winLength} in a row</span>
+                      <IoCheckmark className="text-green-400" />
+                      <span><span className="font-bold">{option.label}</span>: Get {option.winLength} in a row to win</span>
                     </div>
                   ))}
                 </div>
@@ -402,6 +565,18 @@ const ComputerGameRoom = () => {
   return (
     <div className="min-h-screen bg-gray-900 py-8">
       <div className="container mx-auto px-4 lg:px-8">
+        {/* Betting Result Modal */}
+        <AnimatePresence>
+          {showBettingResult && bettingTransaction && (
+            <BettingResultModal
+              result={bettingTransaction.message}
+              transaction={bettingTransaction.transaction}
+              onClose={handleCloseBettingResult}
+              onPlayAgain={handlePlayAgain}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -422,8 +597,15 @@ const ComputerGameRoom = () => {
                   <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
                     Computer Mode
                     <IoSparkles className="text-yellow-300" />
+                    {bettingMode && <IoCash className="text-yellow-400" />}
                   </h1>
                   <div className="flex flex-wrap gap-2 mt-1">
+                    {bettingMode && currentBet && (
+                      <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-bold flex items-center gap-1 animate-pulse">
+                        <IoCash className="text-sm" />
+                        Bet: {currentBet}
+                      </span>
+                    )}
                     <span className="px-3 py-1 bg-purple-700 rounded-full text-xs font-semibold flex items-center gap-1">
                       <IoGrid className="text-sm" />
                       {boardSize}×{boardSize} Board

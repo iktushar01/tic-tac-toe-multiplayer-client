@@ -1,49 +1,49 @@
 const Footer = () => {
   return (
     <footer className="bg-gray-900 border-t border-gray-800 mt-auto">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-bold mb-4 text-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="text-center md:text-left">
+            <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-white">
               <span className="text-cyan-400">X-O</span> Arena
             </h3>
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm sm:text-base">
               The ultimate multiplayer Tic Tac Toe experience. Challenge friends,
               climb the leaderboard, and dominate the arena!
             </p>
           </div>
           
-          <div>
-            <h4 className="text-sm font-bold uppercase mb-4 text-white">Quick Links</h4>
+          <div className="text-center md:text-left">
+            <h4 className="text-xs sm:text-sm font-bold uppercase mb-3 sm:mb-4 text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="/" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm sm:text-base">
                   Home
                 </a>
               </li>
               <li>
-                <a href="/dashboard" className="text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="/dashboard" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm sm:text-base">
                   Dashboard
                 </a>
               </li>
               <li>
-                <a href="/profile" className="text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="/profile" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm sm:text-base">
                   Profile
                 </a>
               </li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="text-sm font-bold uppercase mb-4 text-white">Connect</h4>
-            <div className="flex gap-4">
+          <div className="text-center md:text-left">
+            <h4 className="text-xs sm:text-sm font-bold uppercase mb-3 sm:mb-4 text-white">Connect</h4>
+            <div className="flex gap-3 sm:gap-4 justify-center md:justify-start">
               <a
                 href="#"
-                className="w-10 h-10 rounded-full border border-gray-700 hover:border-cyan-400 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-700 hover:border-cyan-400 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all"
                 aria-label="Twitter"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5 sm:w-6 sm:h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
@@ -83,10 +83,10 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-800 my-8"></div>
+        <div className="border-t border-gray-800 my-6 sm:my-8"></div>
         
         <div className="text-center text-gray-400">
-          <p>© 2024 X-O Arena. All rights reserved.</p>
+          <p className="text-xs sm:text-sm">© 2024 X-O Arena. All rights reserved.</p>
         </div>
       </div>
     </footer>
